@@ -66,7 +66,7 @@ def smallify (dir, file)
 	run = true
 
 	if File.size(filename) < FILESIZE then
-		#FileUtils.touch(filename)
+		FileUtils.touch(filename)
 		puts "Skipping: #{filename}"
 		sleep 1
 		return
