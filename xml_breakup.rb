@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'libxml'
+require 'fileutils'
 
 include LibXML
 
@@ -19,8 +20,8 @@ directory = ARGV[0]
 count = 0
 
 make_backup_directory directory
-big_files = get_big_files directory
-big_files.each do |file|
+files = get_all_files directory
+files.each do |file|
 	smallify(directory, file)
 end
 
@@ -47,14 +48,14 @@ def make_backup_directory (dir)
 	Dir::mkdir(backup_dir)
 end
 
-def get_big_files (dir)
+def get_all_files (dir)
 	#Dir.entries(dir).sort_by{|c| File.stat(c).ctime}
-	big_files = []
+	files = []
 	Dir.entries(dir).sort_by{|c| File.stat("#{dir}/#{c}").ctime}.each do |f|
-		next if File.size(f) < FILESIZE
-		big_files << f
+		next unless f =~ /xml$/
+		files << f
 	end
-	return big_files
+	return files
 end
 
 def smallify (dir, file)
@@ -63,6 +64,13 @@ def smallify (dir, file)
 	header = find_header(filename)
 	count = 1
 	run = true
+
+	if File.size(filename) < FILESIZE then
+		#FileUtils.touch(filename)
+		puts "Skipping: #{filename}"
+		sleep 1
+		return
+	end
 
 	puts "Processing: #{filename}"
 	while run do
