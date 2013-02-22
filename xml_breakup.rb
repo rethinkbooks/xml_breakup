@@ -64,6 +64,16 @@ def smallify (dir, file)
 	header = find_header(filename)
 	count = 1
 	run = true
+	fs = File::Stat.new(filename)
+	year  = fs.mtime.year
+	month = fs.mtime.month
+	day   = fs.mtime.day
+	hour  = fs.mtime.hour
+	min   = fs.mtime.min
+	sec   = fs.mtime.sec
+
+	touch_string = sprintf "touch -t %04d%02d%02d%02d%02d.%02d" % [year, month, day, hour, min, sec]
+
 
 	if File.size(filename) < FILESIZE then
 		FileUtils.touch(filename)
@@ -91,6 +101,7 @@ def smallify (dir, file)
 		end
 		f.write("</ONIXmessage>\n")
 		f.close
+		system("#{touch_string} #{new_file}")
 		count += 1
 	end
 	File.rename(filename, "#{dir}/bak/#{file}")
