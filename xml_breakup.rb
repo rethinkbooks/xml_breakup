@@ -104,7 +104,7 @@ def smallify (dir, file)
 		system("#{touch_string} #{new_file}")
 		count += 1
 	end
-	File.rename(filename, "#{dir}/bak/#{file}")
+	FileUtils.mv(filename, "#{dir}/bak/#{file}")
 end
 
 
