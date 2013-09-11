@@ -49,13 +49,9 @@ def make_backup_directory (dir)
 end
 
 def get_all_files (dir)
-	#Dir.entries(dir).sort_by{|c| File.stat(c).ctime}
-	files = []
-	Dir.entries(dir).sort_by{|c| File.stat("#{dir}/#{c}").ctime}.each do |f|
-		next unless f =~ /xml$/
-		files << f
-	end
-	return files
+	Dir.entries(dir)
+    .sort_by { |c| File.stat("#{dir}/#{c}").ctime }
+    .select { |f| [".xml", ".cot"].include?(File.extname(f)) }
 end
 
 def smallify (dir, file)
@@ -84,7 +80,8 @@ def smallify (dir, file)
 
 	puts "Processing: #{filename}"
 	while run do
-		new_file = "#{dir}/#{file}.#{count}.xml"
+    ext = File.extname(file)
+		new_file = "#{dir}/#{file}.#{count}#{ext}"
 		puts "  Creating: #{new_file}"
 		f = File.open(new_file, "w")
 		f.write header
